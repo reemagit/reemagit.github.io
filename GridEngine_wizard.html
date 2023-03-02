@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GridEngine Query Builder</title>
+</head>
+<body>
+  <h1>GridEngine Query Builder</h1>
+
+  <p>I want to:</p>
+  <select id="command-type">
+    <option value="script">Run a script</option>
+    <option value="session">Start an interactive session</option>
+  </select>
+
+  <p>Script name:</p>
+  <input type="text" id="script-name" />
+
+  <p>Number of cores:</p>
+  <input type="text" id="num-cores" />
+
+  <p>Memory per core (GB):</p>
+  <input type="text" id="memory-per-core" />
+
+  <p>Walltime (hh:mm:ss):</p>
+  <input type="text" id="walltime" />
+
+  <p>Command:</p>
+  <textarea id="output" rows="5"></textarea>
+
+  <script>
+    // Get the DOM elements
+    const commandType = document.getElementById('command-type');
+    const scriptName = document.getElementById('script-name');
+    const numCores = document.getElementById('num-cores');
+    const memoryPerCore = document.getElementById('memory-per-core');
+    const walltime = document.getElementById('walltime');
+    const output = document.getElementById('output');
+
+    // Set up the event listeners
+    commandType.addEventListener('change', updateCommand);
+    scriptName.addEventListener('input', updateCommand);
+    numCores.addEventListener('input', updateCommand);
+    memoryPerCore.addEventListener('input', updateCommand);
+    walltime.addEventListener('input', updateCommand);
+
+    function updateCommand() {
+      const type = commandType.value;
+      const name = scriptName.value;
+      const cores = numCores.value;
+      const memory = memoryPerCore.value;
+      const time = walltime.value;
+
+      let command = '';
+      if (type === 'script') {
+        command = 'qsub';
+
+        if (time) {
+          command += ` -l h_rt=${time}`;
+        }
+        if (cores) {
+          command += ` -pe smp ${cores}`;
+        }
+        if (memory) {
+          command += ` -l mem_per_core=${memory}`;
+        }
+        if (name) {
+          command += ` ${name}`;
+        }
+      } else if (type === 'session') {
+        command = 'qrsh';
+
+        if (cores) {
+          command += ` -pe smp ${cores}`;
+        }
+        if (memory) {
+          command += ` -l mem_per_core=${memory}`;
+        }
+        if (time) {
+          command += ` -l h_rt=${time}`;
+        }
+      }
+
+      output.value = command;
+    }
+  </script>
+</body>
+</html>
