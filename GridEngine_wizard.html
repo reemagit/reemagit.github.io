@@ -75,12 +75,55 @@
         width: 20px;
         height: 20px;
     }
+
+    .tooltip{
+    position: relative;
+    background: rgba(0,0,0,0.3);
+    padding: 5px 12px;
+    border-radius: 100%;
+    font-size: 15px;
+    cursor: help;
+    margin-left: 8px;
+    }
+    .tooltip::before, .tooltip::after{
+    position: absolute;
+    left: 50%;
+    /*opacity: 0;*/
+    display:none;
+    transition: allease0.3s;
+    }
+    .tooltip::before{
+    content: "";
+    border-width: 10px 8px 08px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.3) transparent transparent transparent;
+    top: -20px;
+    margin-left: -8px;
+    }
+    .tooltip::after{
+    content: attr(data-tooltip);
+    background: rgba(0,0,1,0.8);
+    top: -20px;
+    transform: translateY(-100%);
+    font-size: 14px;
+    margin-left: -150px;
+    width: 300px;
+    border-radius: 10px;
+    color: #fff;
+    padding: 14px;
+    }
+
+/* Hover states */
+
+.tooltip:hover::before, .tooltip:hover::after{
+display: inline-block;
+}
   </style>
 </head>
 <body>
   <div class="container">
     <h1 class="header">GridEngine Query Builder</h1>
-
+    <p><center>Wizard tool for building commands for GridEngine</center></p>
     <label for="command-type">I want to:</label>
     <select id="command-type" pattern='__PLACEHOLDER__' onchange="updateForm()">
       <option value="">-- Select a command --</option>
@@ -92,8 +135,10 @@
     </select>
 
     <div id="qsub-fields" style="display: none;">
-      <label for="qsub-script-name">Script name:</label>
+      <label for="qsub-script-name">Script name:<span class="tooltip" data-tooltip="Batch script to run">?</span></label>
       <input type="text" id="qsub-script-name" pattern=' __PLACEHOLDER__', oninput="updateCommand()">
+      
+      
 
       <label for="qsub-num-cores">Number of cores:</label>
       <input type="text" id="qsub-num-cores" pattern=' -pe smp __PLACEHOLDER__' oninput="updateCommand()">
@@ -103,6 +148,9 @@
 
       <label for="qsub-walltime">Walltime (hh:mm:ss):</label>
       <input type="text" id="qsub-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
+
+      <label for="qsub-running" style="display: inline-block;">CWD</label>
+      <input type="checkbox" id="qstat-running" pattern=' -r' oninput="updateCommand()"><span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</span>
     </div>
 
     <div id="qrsh-fields" style="display: none;">
@@ -118,7 +166,7 @@
     </div>
 
     <div id="qstat-fields" style="display: none;">
-      <label for="qstat-job-id">Job ID:</label>
+      <label for="qstat-job-id">Job ID:<span class="tooltip" data-tooltip="Find Job ID with qstat">?</span></label>
       <input type="text" id="qstat-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
 
       <label for="qstat-user">User:</label>
@@ -135,29 +183,40 @@
     <div id="qhost-fields" style="display: none;">
       <label for="qhost-host">Host:</label>
       <input type="text" id="qhost-host" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
+
+      <label for="qhost-queue">Queue:</label>
+      <input type="text" id="qhost-queue" pattern=' -q __PLACEHOLDER__' oninput="updateCommand()">
+
+      <label for="qhost-user">User:</label>
+      <input type="text" id="qhost-user" pattern=' -u __PLACEHOLDER__' oninput="updateCommand()">
+
+      <label for="qhost-jobs" style="display: inline-block;">Jobs</label>
+      <input type="checkbox" id="qhost-host" pattern=' -j' oninput="updateCommand()"><span class="tooltip" data-tooltip="Displays the resource usage statistics for each job running on the hosts">?</span>
+
+      <label for="qhost-load" style="display: inline-block;">Resource usage</label>
+      <input type="checkbox" id="qhost-load" pattern=' -l' oninput="updateCommand()"><span class="tooltip" data-tooltip="Displays detailed information about the load and resource usage on each host">?</span>
+
+      
+      
     </div>
 
     <div id="qdel-fields" style="display: none;">
-      <label for="qdel-job-id">Job ID:</label>
+      <label for="qdel-job-id">Job ID:<span class="tooltip" data-tooltip="Find Job ID with qstat">?</span></label>
       <input type="text" id="qdel-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
     </div>
 
-    <button onclick="copyCommand()">Copy to clipboard</button>
-
     <label for="output">Generated command:</label>
     <textarea id="output"></textarea>
+
+    <center><button onclick="copyCommand()">Copy to clipboard</button></center>
+
+    <div style='text-align:center; margin: 20px;'>Created by Enrico Maiorino</div>
   </div>
+
 
   <script>
     // Get the DOM elements
     const commandType = document.getElementById('command-type');
-
-    arg_mapping = {
-      'qsub-script-name': ' __PLACEHOLDER__',
-      'qsub-num-cores': ' -pe smp __PLACEHOLDER__',
-      'qsub-memory-per-core': ' -l mem_per_core=__PLACEHOLDER__',
-      'qsub-walltime': ' -l h_rt=__PLACEHOLDER__'
-    }
 
     const output = document.getElementById('output');
 
@@ -188,59 +247,7 @@
         }
       }
 
-
-      //const type = commandType.value;
-      //const name = scriptName.value;
-      //const cores = numCores.value;
-      //const memory = memoryPerCore.value;
-      //const time = walltime.value;
-//
-      //let command = '';
-//
-      ////alert(type)
-      //if (type === 'qsub') {
-      //  command = 'qsub';
-//
-      //  if (time) {
-      //    command += ' -l h_rt=${time}';
-      //  }
-      //  if (cores) {
-      //    command += ' -pe smp ${cores}';
-      //  }
-      //  if (memory) {
-      //    command += ' -l mem_per_core=${memory}';
-      //  }
-      //  if (name) {
-      //    command += ' ${name}';
-      //  }
-      //} else if (type === 'qrsh') {
-      //  command = 'qrsh';
-//
-      //  if (cores) {
-      //    command += ' -pe smp ${cores}';
-      //  }
-      //  if (memory) {
-      //    command += ' -l mem_per_core=${memory}';
-      //  }
-      //  if (time) {
-      //    command += ' -l h_rt=${time}';
-      //  }
-      //} else if (type === 'qstat') {
-      //  command = 'qstat';
-//
-      //  if (cores) {
-      //    command += ' -pe smp ${cores}';
-      //  }
-      //  if (memory) {
-      //    command += ' -l mem_per_core=${memory}';
-      //  }
-      //  if (time) {
-      //    command += ' -l h_rt=${time}';
-      //  }
-      //}
-
       output.value = command;
-      //alert(command)
     }
     function updateForm() {
       // Hide all fields initially
