@@ -68,13 +68,6 @@
       margin-bottom: 20px;
       font-size: 1.2rem;
     }
-
-    [type="checkbox"]
-    {
-        vertical-align:middle;
-        width: 20px;
-        height: 20px;
-    }
   </style>
 </head>
 <body>
@@ -82,64 +75,60 @@
     <h1 class="header">GridEngine Query Builder</h1>
 
     <label for="command-type">I want to:</label>
-    <select id="command-type" pattern='__PLACEHOLDER__' onchange="updateForm()">
+    <select id="command-type" onchange="updateForm()">
       <option value="">-- Select a command --</option>
-      <option value="qsub">Submit a batch job (qsub)</option>
-      <option value="qrsh">Start an interactive session< (qrsh)/option>
-      <option value="qstat">Check job status (qstat)</option>
-      <option value="qhost">Check host status (qhost)</option>
-      <option value="qdel">Delete a job (qdel)</option>
+      <option value="qsub">Submit a job</option>
+      <option value="qrsh">Start an interactive session</option>
+      <option value="qstat">Check job status</option>
+      <option value="qhost">Check host status</option>
+      <option value="qdel">Delete a job</option>
     </select>
 
     <div id="qsub-fields" style="display: none;">
       <label for="qsub-script-name">Script name:</label>
-      <input type="text" id="qsub-script-name" pattern=' __PLACEHOLDER__', oninput="updateCommand()">
+      <input type="text" id="qsub-script-name" oninput="updateCommand()">
 
       <label for="qsub-num-cores">Number of cores:</label>
-      <input type="text" id="qsub-num-cores" pattern=' -pe smp __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qsub-num-cores" oninput="updateCommand()">
 
       <label for="qsub-memory-per-core">Memory per core (GB):</label>
-      <input type="text" id="qsub-memory-per-core" pattern=' -l mem_per_core=__PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qsub-memory-per-core" oninput="updateCommand()">
 
       <label for="qsub-walltime">Walltime (hh:mm:ss):</label>
-      <input type="text" id="qsub-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qsub-walltime" oninput="updateCommand()">
     </div>
 
     <div id="qrsh-fields" style="display: none;">
 
       <label for="qrsh-num-cores">Number of cores:</label>
-      <input type="text" id="qrsh-num-cores" pattern=' -pe smp __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qrsh-num-cores" oninput="updateCommand()">
 
       <label for="qrsh-memory-per-core">Memory per core (GB):</label>
-      <input type="text" id="qrsh-memory-per-core" pattern=' -l mem_per_core=__PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qrsh-memory-per-core" oninput="updateCommand()">
 
       <label for="qrsh-walltime">Walltime (hh:mm:ss):</label>
-      <input type="text" id="qrsh-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qrsh-walltime" oninput="updateCommand()">
     </div>
 
     <div id="qstat-fields" style="display: none;">
       <label for="qstat-job-id">Job ID:</label>
-      <input type="text" id="qstat-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qstat-job-id" oninput="updateCommand()">
 
       <label for="qstat-user">User:</label>
-      <input type="text" id="qstat-user" pattern=' -u __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qstat-user" oninput="updateCommand()">
 
-      <label for="qstat-full" style="display: inline-block;">Full details </label>
-      <input type="checkbox" id="qstat-full" pattern=' -f' oninput="updateCommand()">
-
-      <label for="qstat-running" style="display: inline-block;">Only running jobs</label>
-      <input type="checkbox" id="qstat-running" pattern=' -r' oninput="updateCommand()">
-      
+      <label for="qstat-full">User:</label>
+      <input type="checkbox" id="qstat-full" oninput="updateCommand()">
     </div>
 
     <div id="qhost-fields" style="display: none;">
       <label for="qhost-host">Host:</label>
-      <input type="text" id="qhost-host" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qhost-host" oninput="updateCommand()">
     </div>
 
     <div id="qdel-fields" style="display: none;">
       <label for="qdel-job-id">Job ID:</label>
-      <input type="text" id="qdel-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qdel-job-id" oninput="updateCommand()">
     </div>
 
     <button onclick="copyCommand()">Copy to clipboard</button>
@@ -150,94 +139,74 @@
 
   <script>
     // Get the DOM elements
-    const commandType = document.getElementById('command-type');
+    const qsub_commandType = document.getElementById('command-type');
+    
+    const qsub_scriptName = document.getElementById('qsub-script-name');
+    const qsub_numCores = document.getElementById('qsub-num-cores');
+    const qsub_memoryPerCore = document.getElementById('qsub-memory-per-core');
+    const qsub_walltime = document.getElementById('qsub-walltime');
 
-    arg_mapping = {
-      'qsub-script-name': ' __PLACEHOLDER__',
-      'qsub-num-cores': ' -pe smp __PLACEHOLDER__',
-      'qsub-memory-per-core': ' -l mem_per_core=__PLACEHOLDER__',
-      'qsub-walltime': ' -l h_rt=__PLACEHOLDER__'
-    }
+    const qrsh_scriptName = document.getElementById('qrsh-script-name');
+    const qrsh_numCores = document.getElementById('qrsh-num-cores');
+    const qrsh_memoryPerCore = document.getElementById('qrsh-memory-per-core');
+    const qrsh_walltime = document.getElementById('qrsh-walltime');
+
+    const qstat_scriptName = document.getElementById('qstat-job-id');
+    const qstat_numCores = document.getElementById('qstat-user');
+    const qstat_memoryPerCore = document.getElementById('qstat-full');
 
     const output = document.getElementById('output');
 
     function updateCommand() {
-
       const type = commandType.value;
+      const name = scriptName.value;
+      const cores = numCores.value;
+      const memory = memoryPerCore.value;
+      const time = walltime.value;
 
-      if (type == '') { 
-        output.value = '';
-        return
-      }
+      let command = '';
 
-      childNodes = document.querySelector("#" + type + "-fields").childNodes;
+      //alert(type)
+      if (type === 'qsub') {
+        command = 'qsub';
 
-      let command = type;
+        if (time) {
+          command += ` -l h_rt=${time}`;
+        }
+        if (cores) {
+          command += ` -pe smp ${cores}`;
+        }
+        if (memory) {
+          command += ` -l mem_per_core=${memory}`;
+        }
+        if (name) {
+          command += ` ${name}`;
+        }
+      } else if (type === 'qrsh') {
+        command = 'qrsh';
 
-      for(let i = 0; i < childNodes.length; i++) {
-        node = childNodes[i];
-        if (node.nodeName.toLowerCase() === 'input') {
-          if (node.getAttribute('type') == 'checkbox') {
-            if (node.checked) {
-              command += node.getAttribute('pattern')
-            }
-          }
-          else if (node.value) {
-            command += node.getAttribute('pattern').replace('__PLACEHOLDER__',node.value);
-          }
+        if (cores) {
+          command += ` -pe smp ${cores}`;
+        }
+        if (memory) {
+          command += ` -l mem_per_core=${memory}`;
+        }
+        if (time) {
+          command += ` -l h_rt=${time}`;
+        }
+      } else if (type === 'qstat') {
+        command = 'qstat';
+
+        if (cores) {
+          command += ` -pe smp ${cores}`;
+        }
+        if (memory) {
+          command += ` -l mem_per_core=${memory}`;
+        }
+        if (time) {
+          command += ` -l h_rt=${time}`;
         }
       }
-
-
-      //const type = commandType.value;
-      //const name = scriptName.value;
-      //const cores = numCores.value;
-      //const memory = memoryPerCore.value;
-      //const time = walltime.value;
-//
-      //let command = '';
-//
-      ////alert(type)
-      //if (type === 'qsub') {
-      //  command = 'qsub';
-//
-      //  if (time) {
-      //    command += ' -l h_rt=${time}';
-      //  }
-      //  if (cores) {
-      //    command += ' -pe smp ${cores}';
-      //  }
-      //  if (memory) {
-      //    command += ' -l mem_per_core=${memory}';
-      //  }
-      //  if (name) {
-      //    command += ' ${name}';
-      //  }
-      //} else if (type === 'qrsh') {
-      //  command = 'qrsh';
-//
-      //  if (cores) {
-      //    command += ' -pe smp ${cores}';
-      //  }
-      //  if (memory) {
-      //    command += ' -l mem_per_core=${memory}';
-      //  }
-      //  if (time) {
-      //    command += ' -l h_rt=${time}';
-      //  }
-      //} else if (type === 'qstat') {
-      //  command = 'qstat';
-//
-      //  if (cores) {
-      //    command += ' -pe smp ${cores}';
-      //  }
-      //  if (memory) {
-      //    command += ' -l mem_per_core=${memory}';
-      //  }
-      //  if (time) {
-      //    command += ' -l h_rt=${time}';
-      //  }
-      //}
 
       output.value = command;
       //alert(command)
