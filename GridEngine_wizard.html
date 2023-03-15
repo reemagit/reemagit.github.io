@@ -135,10 +135,6 @@ display: inline-block;
     </select>
 
     <div id="qsub-fields" style="display: none;">
-      <label for="qsub-script-name">Script name:<span class="tooltip" data-tooltip="Batch script to run">?</span></label>
-      <input type="text" id="qsub-script-name" pattern=' __PLACEHOLDER__', oninput="updateCommand()">
-      
-      
 
       <label for="qsub-num-cores">Number of cores:</label>
       <input type="text" id="qsub-num-cores" pattern=' -pe smp __PLACEHOLDER__' oninput="updateCommand()">
@@ -149,8 +145,20 @@ display: inline-block;
       <label for="qsub-walltime">Walltime (hh:mm:ss):</label>
       <input type="text" id="qsub-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
 
+      <label for="qsub-output">Output file:</label>
+      <input type="text" id="qsub-output" pattern=' -o __PLACEHOLDER__' oninput="updateCommand()">
+
+      <label for="qsub-error">Error file:</label>
+      <input type="text" id="qsub-error" pattern=' -e __PLACEHOLDER__' oninput="updateCommand()">
+
       <label for="qsub-running" style="display: inline-block;">CWD</label>
-      <input type="checkbox" id="qstat-running" pattern=' -r' oninput="updateCommand()"><span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</span>
+      <input type="checkbox" id="qstat-running" pattern=' -cwd' oninput="updateCommand()" checked><span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</span>
+
+      <label for="qsub-command" style="display: inline-block;">Command</label>
+      <input type="checkbox" id="qstat-command" pattern=' -b y' oninput="updateCommand()"><span class="tooltip" data-tooltip="Run as command instead of job script">?</span>
+      </br></br>
+      <label for="qsub-script-name">Script name:<span class="tooltip" data-tooltip="Batch script to run">?</span></label>
+      <input type="text" id="qsub-script-name" pattern=' __PLACEHOLDER__', oninput="updateCommand()">
     </div>
 
     <div id="qrsh-fields" style="display: none;">
@@ -163,6 +171,7 @@ display: inline-block;
 
       <label for="qrsh-walltime">Walltime (hh:mm:ss):</label>
       <input type="text" id="qrsh-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
+
     </div>
 
     <div id="qstat-fields" style="display: none;">
