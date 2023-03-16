@@ -7,12 +7,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       margin: 0;
       font-family: Arial, sans-serif;
+      /*overflow-y: scroll;*/
     }
 
     .container {
+      display:block;
       background-color: #f1f1f1;
       border-radius: 5px;
       padding: 20px;
@@ -113,6 +114,74 @@
     padding: 14px;
     }
 
+
+    /* TOGGLE SWITCH */
+    /* The switch - the box around the slider */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+      vertical-align:middle;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* The slider */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    /* END TOGGLE SWITCH */
+
+
 /* Hover states */
 
 .tooltip:hover::before, .tooltip:hover::after{
@@ -157,8 +226,15 @@ display: inline-block;
       <label for="qsub-command" style="display: inline-block;">Command</label>
       <input type="checkbox" id="qstat-command" pattern=' -b y' oninput="updateCommand()"><span class="tooltip" data-tooltip="Run as command instead of job script">?</span>
       </br></br>
-      <label for="qsub-script-name">Script name:<span class="tooltip" data-tooltip="Batch script to run">?</span></label>
+      <label for="qsub-script-name">Script name / Command:<span class="tooltip" data-tooltip="If the 'Command' checkbox is not selected and the 'Batch script' toggle is off this is the name of batch script to submit (e.g. 'batch_job.sh'). \nOtherwise it is the actual command (e.g. 'python script.py arg1 arg2')">?</span></label>
       <input type="text" id="qsub-script-name" pattern=' __PLACEHOLDER__', oninput="updateCommand()">
+
+      <!-- Rounded switch -->
+      <label for="batch-script-toggle">Create batch script<span class="tooltip" data-tooltip="Whether to output a qsub command to submit a job with an existing script or create the contents for a batch script to be called with \"qsub script.sh\"">?</span></label>
+      <label class="switch">
+        <input id="batch-script-toggle" type="checkbox" oninput="updateCommand()">
+        <span class="slider round"></span>
+      </label>
     </div>
 
     <div id="qrsh-fields" style="display: none;">
@@ -214,6 +290,9 @@ display: inline-block;
       <input type="text" id="qdel-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
     </div>
 
+
+
+
     <label for="output">Generated command:</label>
     <textarea id="output"></textarea>
 
@@ -231,6 +310,18 @@ display: inline-block;
 
     function updateCommand() {
 
+      if (document.getElementById('batch-script-toggle').checked) {
+        command = constructBatchScript();  
+      } else {
+        command = constructCommand();  
+      }
+
+      
+
+      output.value = command;
+    }
+
+    function constructCommand() {
       const type = commandType.value;
 
       if (type == '') { 
@@ -255,8 +346,42 @@ display: inline-block;
           }
         }
       }
+      return command;
+    }
 
-      output.value = command;
+    function constructBatchScript() {
+
+      const type = commandType.value;
+
+      if (type == '') { 
+        output.value = '';
+        return
+      }
+
+      //childNodes = document.querySelector("#" + type + "-fields").childNodes;
+
+      let command = '#!/bin/bash';
+
+      for(let i = 0; i < childNodes.length; i++) {
+        node = childNodes[i];
+        if (node.nodeName.toLowerCase() === 'input') {
+          if (node.getAttribute('type') == 'checkbox') {
+            if (node.checked) {
+              command += '\n#$' + node.getAttribute('pattern')
+            }
+          }
+          else if ((node.value) && (node.id != 'qsub-script-name')) {
+            command += '\n#$' + node.getAttribute('pattern').replace('__PLACEHOLDER__',node.value);
+          }
+        }
+      }
+      command += '\n\n';
+      command += '/bin/bash\n';
+
+      script_name = document.getElementById("qsub-script-name")
+      command += script_name.getAttribute('pattern').replace('__PLACEHOLDER__',script_name.value).trimStart();
+
+      return command;
     }
     function updateForm() {
       // Hide all fields initially
