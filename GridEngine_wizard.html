@@ -191,6 +191,7 @@ display: inline-block;
 </head>
 <body>
   <div class="container">
+    <form id='command-form'>
     <h1 class="header">GridEngine Query Builder</h1>
     <p><center>Wizard tool for building commands for GridEngine</center></p>
     <label for="command-type">I want to:</label>
@@ -206,7 +207,7 @@ display: inline-block;
     <div id="qsub-fields" style="display: none;">
 
       <label for="qsub-num-cores">Number of cores:</label>
-      <input type="text" id="qsub-num-cores" pattern=' -pe smp __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qsub-num-cores" pattern=' -l m_core=__PLACEHOLDER__ -pe ompi_f __PLACEHOLDER__' oninput="updateCommand()">
 
       <label for="qsub-memory-per-core">Memory per core (GB):</label>
       <input type="text" id="qsub-memory-per-core" pattern=' -l mem_per_core=__PLACEHOLDER__' oninput="updateCommand()">
@@ -223,11 +224,17 @@ display: inline-block;
       <label for="qsub-running" style="display: inline-block;">CWD</label>
       <input type="checkbox" id="qstat-running" pattern=' -cwd' oninput="updateCommand()" checked><span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</span>
 
+      <label for="qsub-fast" style="display: inline-block;">Fast queue (12 hours)</label>
+      <input type="checkbox" id="qstat-fast" pattern=' -l 12hour=true' oninput="updateCommand()"><span class="tooltip" data-tooltip="If you are running a shorter job and can't seem to find a queue to run in you may want to use the 12 hour queue.  Nodes may come and go form this queue depending on cluster utilization and resource availability.  This queue runs jobs for up to 12 hours of wall clock (real life) time before killing the job.">?</span>
+
       <label for="qsub-command" style="display: inline-block;">Command</label>
       <input type="checkbox" id="qstat-command" pattern=' -b y' oninput="updateCommand()"><span class="tooltip" data-tooltip="Run as command instead of job script">?</span>
+
       </br></br>
       <label for="qsub-script-name">Script name / Command:<span class="tooltip" data-tooltip="If the 'Command' checkbox is not selected and the 'Batch script' toggle is off this is the name of batch script to submit (e.g. 'batch_job.sh'). \nOtherwise it is the actual command (e.g. 'python script.py arg1 arg2')">?</span></label>
       <input type="text" id="qsub-script-name" pattern=' __PLACEHOLDER__', oninput="updateCommand()">
+
+
 
       <!-- Rounded switch -->
       <label for="batch-script-toggle">Create batch script<span class="tooltip" data-tooltip="Whether to output a qsub command to submit a job with an existing script or create the contents for a batch script to be called with \"qsub script.sh\"">?</span></label>
@@ -240,7 +247,7 @@ display: inline-block;
     <div id="qrsh-fields" style="display: none;">
 
       <label for="qrsh-num-cores">Number of cores:</label>
-      <input type="text" id="qrsh-num-cores" pattern=' -pe smp __PLACEHOLDER__' oninput="updateCommand()">
+      <input type="text" id="qrsh-num-cores" pattern=' -l m_core=__PLACEHOLDER__ -pe ompi_f __PLACEHOLDER__' oninput="updateCommand()">
 
       <label for="qrsh-memory-per-core">Memory per core (GB):</label>
       <input type="text" id="qrsh-memory-per-core" pattern=' -l mem_per_core=__PLACEHOLDER__' oninput="updateCommand()">
@@ -288,6 +295,9 @@ display: inline-block;
     <div id="qdel-fields" style="display: none;">
       <label for="qdel-job-id">Job ID:<span class="tooltip" data-tooltip="Find Job ID with qstat">?</span></label>
       <input type="text" id="qdel-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
+
+      <label for="qdel-user">User:<span class="tooltip" data-tooltip="Delete all jobs by user">?</span></label>
+      <input type="text" id="qdel-user" pattern=' -u __PLACEHOLDER__' oninput="updateCommand()">
     </div>
 
 
@@ -300,7 +310,7 @@ display: inline-block;
 
     <div style='text-align:center; margin: 20px;'>Created by Enrico Maiorino</div>
   </div>
-
+  </form>
 
   <script>
     // Get the DOM elements
@@ -384,12 +394,14 @@ display: inline-block;
       return command;
     }
     function updateForm() {
+
       // Hide all fields initially
       document.getElementById("qsub-fields").style.display = "none";
       document.getElementById("qrsh-fields").style.display = "none";
       document.getElementById("qstat-fields").style.display = "none";
       document.getElementById("qhost-fields").style.display = "none";
       document.getElementById("qdel-fields").style.display = "none";
+
 
       // Show fields for the selected command
       const commandType = document.getElementById("command-type").value;
