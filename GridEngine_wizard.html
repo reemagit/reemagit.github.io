@@ -209,8 +209,8 @@ display: inline-block;
       <label for="qsub-num-cores">Number of cores:</label>
       <input type="text" id="qsub-num-cores" pattern=' -l m_core=__PLACEHOLDER__ -pe ompi_f __PLACEHOLDER__' oninput="updateCommand()">
 
-      <label for="qsub-memory-per-core">Memory per core (GB):</label>
-      <input type="text" id="qsub-memory-per-core" pattern=' -l mem_per_core=__PLACEHOLDER__' oninput="updateCommand()">
+      <label for="qsub-memory-per-core">Memory per core (GB):<span class="tooltip" data-tooltip="The job will not be killed for using too much memory, but if you use a lot, you can avoid swapping by first requesting what you need. It's also good grid etiquette.">?</span></label>
+      <input type="text" id="qsub-memory-per-core" pattern=' -l vf=__PLACEHOLDER__G' oninput="updateCommand()">
 
       <label for="qsub-walltime">Walltime (hh:mm:ss):</label>
       <input type="text" id="qsub-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
@@ -249,8 +249,8 @@ display: inline-block;
       <label for="qrsh-num-cores">Number of cores:</label>
       <input type="text" id="qrsh-num-cores" pattern=' -l m_core=__PLACEHOLDER__ -pe ompi_f __PLACEHOLDER__' oninput="updateCommand()">
 
-      <label for="qrsh-memory-per-core">Memory per core (GB):</label>
-      <input type="text" id="qrsh-memory-per-core" pattern=' -l mem_per_core=__PLACEHOLDER__' oninput="updateCommand()">
+      <label for="qrsh-memory-per-core">Memory per core (GB):<span class="tooltip" data-tooltip="The job will not be killed for using too much memory, but if you use a lot, you can avoid swapping by first requesting what you need. It's also good grid etiquette.">?</span></label>
+      <input type="text" id="qrsh-memory-per-core" pattern=' -l vf=__PLACEHOLDER__G' oninput="updateCommand()">
 
       <label for="qrsh-walltime">Walltime (hh:mm:ss):</label>
       <input type="text" id="qrsh-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
