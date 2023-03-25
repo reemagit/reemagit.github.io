@@ -193,7 +193,7 @@ display: inline-block;
   <div class="container">
     <form id='command-form'>
     <h1 class="header">GridEngine Query Builder</h1>
-    <p><center>Wizard tool for building commands for GridEngine</center></p>
+    <p><center>Wizard tool for building commands for GridEngine @ CDNM</center></p>
     <label for="command-type">I want to:</label>
     <select id="command-type" pattern='__PLACEHOLDER__' onchange="updateForm()">
       <option value="">-- Select a command --</option>
@@ -221,14 +221,19 @@ display: inline-block;
       <label for="qsub-error">Error file:</label>
       <input type="text" id="qsub-error" pattern=' -e __PLACEHOLDER__' oninput="updateCommand()">
 
-      <label for="qsub-running" style="display: inline-block;">CWD</label>
-      <input type="checkbox" id="qstat-running" pattern=' -cwd' oninput="updateCommand()" checked><span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</span>
+      <input type="checkbox" id="qsub-running" pattern=' -cwd' oninput="updateCommand()" checked></span><label for="qsub-running" style="display: inline-block;">CWD<span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</label>
 
-      <label for="qsub-fast" style="display: inline-block;">Fast queue (12 hours)</label>
-      <input type="checkbox" id="qstat-fast" pattern=' -l 12hour=true' oninput="updateCommand()"><span class="tooltip" data-tooltip="If you are running a shorter job and can't seem to find a queue to run in you may want to use the 12 hour queue.  Nodes may come and go form this queue depending on cluster utilization and resource availability.  This queue runs jobs for up to 12 hours of wall clock (real life) time before killing the job.">?</span>
+      <input type="checkbox" id="qsub-variables" pattern=' -V' oninput="updateCommand()" checked><label for="qsub-variables" style="display: inline-block;">Export env. variables<span class="tooltip" data-tooltip="The job will inherit the environment variables that are defined when the job is submitted (e.g. conda environment, etc.)">?</span></label>
+      
 
-      <label for="qsub-command" style="display: inline-block;">Command</label>
-      <input type="checkbox" id="qstat-command" pattern=' -b y' oninput="updateCommand()"><span class="tooltip" data-tooltip="Run as command instead of job script">?</span>
+      </br>
+
+      <input type="checkbox" id="qstat-fast" pattern=' -l 12hour=true' oninput="updateCommand()">
+      <label for="qsub-fast" style="display: inline-block;">Fast queue (12 hours)<span class="tooltip" data-tooltip="If you are running a shorter job and can't seem to find a queue to run in you may want to use the 12 hour queue.  Nodes may come and go form this queue depending on cluster utilization and resource availability.  This queue runs jobs for up to 12 hours of wall clock (real life) time before killing the job.">?</span></label>
+      
+
+      <input type="checkbox" id="qstat-command" pattern=' -b y' oninput="updateCommand()"><label for="qsub-command" style="display: inline-block;">Command<span class="tooltip" data-tooltip="Run as command instead of job script">?</span></label>
+      
 
       </br></br>
       <label for="qsub-script-name">Script name / Command:<span class="tooltip" data-tooltip="If the 'Command' checkbox is not selected and the 'Batch script' toggle is off this is the name of batch script to submit (e.g. 'batch_job.sh'). \nOtherwise it is the actual command (e.g. 'python script.py arg1 arg2')">?</span></label>
@@ -255,20 +260,26 @@ display: inline-block;
       <label for="qrsh-walltime">Walltime (hh:mm:ss):</label>
       <input type="text" id="qrsh-walltime" pattern=' -l h_rt=__PLACEHOLDER__' oninput="updateCommand()">
 
+      <input type="checkbox" id="qrsh-running" pattern=' -cwd' oninput="updateCommand()" checked></span><label for="qrsh-running" style="display: inline-block;">CWD<span class="tooltip" data-tooltip="Run job from current working directory (CWD)">?</label>
+
+      <input type="checkbox" id="qrsh-variables" pattern=' -V' oninput="updateCommand()" checked><label for="qrsh-variables" style="display: inline-block;">Export env. variables<span class="tooltip" data-tooltip="The job will inherit the environment variables that are defined when the job is submitted (e.g. conda environment, etc.)">?</span></label>
+
     </div>
 
     <div id="qstat-fields" style="display: none;">
       <label for="qstat-job-id">Job ID:<span class="tooltip" data-tooltip="Find Job ID with qstat">?</span></label>
       <input type="text" id="qstat-job-id" pattern=' __PLACEHOLDER__' oninput="updateCommand()">
 
-      <label for="qstat-user">User:</label>
+      <label for="qstat-user">User:<span class="tooltip" data-tooltip="Show status specific user. Type '\*' to show status for all users">?</span></label>
       <input type="text" id="qstat-user" pattern=' -u __PLACEHOLDER__' oninput="updateCommand()">
 
-      <label for="qstat-full" style="display: inline-block;">Full details </label>
       <input type="checkbox" id="qstat-full" pattern=' -f' oninput="updateCommand()">
+      <label for="qstat-full" style="display: inline-block;">Full details</label>
+      
 
-      <label for="qstat-running" style="display: inline-block;">Only running jobs</label>
       <input type="checkbox" id="qstat-running" pattern=' -r' oninput="updateCommand()">
+      <label for="qstat-running" style="display: inline-block;">Only running jobs</label>
+      
       
     </div>
 
@@ -282,13 +293,11 @@ display: inline-block;
       <label for="qhost-user">User:</label>
       <input type="text" id="qhost-user" pattern=' -u __PLACEHOLDER__' oninput="updateCommand()">
 
-      <label for="qhost-jobs" style="display: inline-block;">Jobs</label>
-      <input type="checkbox" id="qhost-host" pattern=' -j' oninput="updateCommand()"><span class="tooltip" data-tooltip="Displays the resource usage statistics for each job running on the hosts">?</span>
-
-      <label for="qhost-load" style="display: inline-block;">Resource usage</label>
-      <input type="checkbox" id="qhost-load" pattern=' -l' oninput="updateCommand()"><span class="tooltip" data-tooltip="Displays detailed information about the load and resource usage on each host">?</span>
-
+      <input type="checkbox" id="qhost-host" pattern=' -j' oninput="updateCommand()">
+      <label for="qhost-jobs" style="display: inline-block;">Jobs<span class="tooltip" data-tooltip="Displays the resource usage statistics for each job running on the hosts">?</span></label>
       
+      <input type="checkbox" id="qhost-load" pattern=' -l' oninput="updateCommand()">
+      <label for="qhost-load" style="display: inline-block;">Resource usage<span class="tooltip" data-tooltip="Displays detailed information about the load and resource usage on each host">?</span></label>
       
     </div>
 
