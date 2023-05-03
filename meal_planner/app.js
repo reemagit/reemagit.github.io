@@ -1,46 +1,3 @@
-const data = {
-  "masterMenu": [
-    {
-      "day": "Monday",
-      "lunch": "pasta",
-      "dinner": "fish"
-    },
-    // ...
-  ],
-  "recipes": [
-    {
-      name: "Spaghetti Bolognese",
-      type: "pasta",
-      ingredients: [
-        { name: "spaghetti", quantity: "200g" },
-        { name: "ground beef", quantity: "300g" },
-        { name: "onion", quantity: "1" },
-        { name: "tomato sauce", quantity: "400g" },
-      ],
-    },
-    {
-      name: "Penne Arrabbiata",
-      type: "pasta",
-      ingredients: [
-        { name: "penne", quantity: "200g" },
-        { name: "garlic", quantity: "2 cloves" },
-        { name: "crushed red pepper", quantity: "1 tsp" },
-        { name: "tomato sauce", quantity: "400g" },
-      ],
-    },
-    {
-      "name": "Orata al forno",
-      "type": "fish",
-      ingredients: [
-        { name: "spaghetti", quantity: "200g" },
-        { name: "ground beef", quantity: "300g" },
-        { name: "onion", quantity: "1" },
-        { name: "tomato sauce", quantity: "400g" },
-      ],
-    },
-    // ...
-  ]
-};
 
 function buildMasterMenu() {
   let masterMenuHtml = '<table class="table table-bordered"><thead><tr><th scope="col">Day</th><th scope="col">Lunch</th><th scope="col">Dinner</th></tr></thead><tbody>';
@@ -58,12 +15,12 @@ function buildWeeklyMenu() {
 
   data.masterMenu.forEach(dayMenu => {
     const lunchOptions = data.recipes
-      .filter(recipe => recipe.type === dayMenu.lunch)
+      .filter(recipe => recipe.category === dayMenu.lunch)
       .map(recipe => `<option value="${recipe.name}">${recipe.name}</option>`)
       .join('');
 
     const dinnerOptions = data.recipes
-      .filter(recipe => recipe.type === dayMenu.dinner)
+      .filter(recipe => recipe.category === dayMenu.dinner)
       .map(recipe => `<option value="${recipe.name}">${recipe.name}</option>`)
       .join('');
 
@@ -110,11 +67,11 @@ function buildGeneratedMenu(menuData) {
       recipe.ingredients.forEach(ingredient => {
         if (ingredients[ingredient.name]) {
           ingredients[ingredient.name].count += 1;
-          ingredients[ingredient.name].meals.push(`${dayMenu.day} ${mealType}`);
+          ingredients[ingredient.name].meals.push(`${mealName} (${dayMenu.day} ${mealType})`);
         } else {
           ingredients[ingredient.name] = {
             count: 1,
-            meals: [`${dayMenu.day} ${mealType}`],
+            meals: [`${mealName} (${dayMenu.day} ${mealType})`],
           };
         }
       });
@@ -162,18 +119,6 @@ function buildGeneratedMenu(menuData) {
   });
 }
 
-
-/*
-function buildGeneratedMenu(menuData) {
-  let generatedMenuHtml = '<table class="table table-bordered"><thead><tr><th scope="col">Day</th><th scope="col">Lunch</th><th scope="col">Dinner</th></tr></thead><tbody>';
-
-  menuData.forEach(dayMenu => {
-    generatedMenuHtml += `<tr><th scope="row">${dayMenu.day}</th><td>${dayMenu.lunch}</td><td>${dayMenu.dinner}</td></tr>`;
-  });
-
-  generatedMenuHtml += '</tbody></table>';
-  document.getElementById('generated-menu').innerHTML = generatedMenuHtml;
-}*/
 
 $(document).ready(function () {
   buildMasterMenu();

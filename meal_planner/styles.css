@@ -50,3 +50,43 @@ table {
 .accordion {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
+
+/* Dark mode styles 
+body {
+  background-color: #222;
+  color: #f0f0f0;
+}
+
+h2 {
+  color: #f0f0f0;
+}
+
+.table {
+  background-color: #333;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #444;
+}
+
+.table thead th {
+  border-bottom-color: #444;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #555;
+}
+
+.card {
+  background-color: #333;
+  border-color: #444;
+}
+
+.card-header {
+  background-color: #444;
+}
+
+.card-body {
+  background-color: #333;
+}*/
