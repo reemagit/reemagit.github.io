@@ -1,0 +1,52 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.nav-tabs {
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+table {
+  background-color: #fff;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+#generate-menu-button {
+  display: block;
+  margin: 1.5rem auto;
+}
+
+/* Media queries for iPhone and iPad */
+@media screen and (max-width: 767px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+  }
+}
+
+#shoplist-title {
+  text-align: center;
+  padding: 10px;
+}
+
+.accordion {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
